@@ -12,10 +12,7 @@
 }
 </style>
 </head>
-
 <body>
-
-<table border="1" cellpadding="5" cellspacing="0" align="center">
 
 <?php
 
@@ -23,38 +20,21 @@
 $date = new DateTime();
 
 
-//西暦は4桁制限
-if (preg_match('/^[0-9]{4}+$/', $_GET["year"])) {
-  echo '$_GET["year"] => OK!';
-} else {
-  echo '$_GET["year"] => ダメ！';
-}
-//西暦は4桁制限
-if (preg_match('/^[1-9]{1}?[0-9]*?$/', $_GET["month"])) {
-  echo '$_GET["month"] => OK!';
-} else {
-  echo '$_GET["month"] => ダメ！';
-}
-
-
 //GETパラメータのチェック
-//if(isset($_GET["year"]) && is_int($_GET["year"]) && $_GET["year"] > 1582 && isset($_GET["month"]) && is_int($_GET["month"]) && $_GET["month"] > 0 && $_GET["month"] < 13){
-
-
+//年は1582以降の4桁数値（後に使用するツェラーの公式では1582年以降が対象の為。）
+//月は1～12までの数値
 if (preg_match('/^[0-9]{4}+$/', $_GET["year"]) && $_GET["year"] > 1582 && preg_match('/^[1-9]{1}?[0-2]*?$/', $_GET["month"])) {
-	$year = $_GET["year"];
-	$month = $_GET["month"];
+	$year = (int)$_GET["year"];
+	$month = (int)$_GET["month"];
+//上記以外の場合は今月のカレンダーを表示する
 }else{
-	$year = $date->format('Y');
-	$month = $date->format('n');
+	$year = (int)$date->format('Y');
+	$month = (int)$date->format('n');
 }
 
 $day = 1;
 
-
-
-
-//年月を表示
+//表示するカレンダーの年月を表示
 echo '<div class="center">'.$year.'年'.$month.'月</div><br>';
 
 //月の日数を判定
@@ -62,7 +42,7 @@ if( $month == 2){
 	//閏年
 	if($year % 4 == 0 && $year % 100 != 0 || $year % 400 == 0 ){
 		$dayMax = 29;
-	//それ以外
+	//閏年以外
 	}else{
 		$dayMax = 28;
 	}
@@ -72,7 +52,7 @@ if( $month == 2){
 	$dayMax = 31;
 }
 
-//ツェラーの公式の準備
+//1日が何曜日になるのかを判定する（ツェラーの公式を使用する。1582年以降が対象。）
 //1月は前年の13月にする
 if($month == 1){
 	$month = 13;
@@ -82,22 +62,20 @@ if($month == 1){
 	$month = 14;
 	$year = $year - 1;
 }
-//1日は何曜日か？
-//ツェラーの公式より。1582年以降が対象。
+//buf1は、「日：0, 月：1, 火：2, 水：3, 木：4, 金：5, 土：6 」になる
 $buf1 = (floor(($month * 13 + 8) / 5) + floor($year / 4) + $year - floor($year / 100) + floor($year / 400) + $day) % 7;
 
-//echo 'buf1='.$buf1.'<br>';
-
-//カレンダーを表示
-echo '<tr>';
-	echo '<td align="center" bgcolor="#eeeeee">日</td>';//0
-	echo '<td align="center" bgcolor="#eeeeee">月</td>';//1
-	echo '<td align="center" bgcolor="#eeeeee">火</td>';//2
-	echo '<td align="center" bgcolor="#eeeeee">水</td>';//3
-	echo '<td align="center" bgcolor="#eeeeee">木</td>';//4
-	echo '<td align="center" bgcolor="#eeeeee">金</td>';//5
-	echo '<td align="center" bgcolor="#eeeeee">土</td>';//6
-echo '</tr>';
+echo '<table border="1" cellpadding="5" cellspacing="0" align="center">';
+	//カレンダーを表示
+	echo '<tr>';
+		echo '<td align="center" bgcolor="#eeeeee">日</td>';
+		echo '<td align="center" bgcolor="#eeeeee">月</td>';
+		echo '<td align="center" bgcolor="#eeeeee">火</td>';
+		echo '<td align="center" bgcolor="#eeeeee">水</td>';
+		echo '<td align="center" bgcolor="#eeeeee">木</td>';
+		echo '<td align="center" bgcolor="#eeeeee">金</td>';
+		echo '<td align="center" bgcolor="#eeeeee">土</td>';
+	echo '</tr>';
 
 	echo '<tr>';
 	//カレンダー1行目の出力
@@ -136,7 +114,8 @@ echo '</tr>';
 		}
 		echo '</tr>';
 	}
-	
+echo '</table>';
+
 //ツェラーの公式で使用した1月、2月を元に戻す
 if($month == 13){
 	$month = 1;
@@ -145,16 +124,16 @@ if($month == 13){
 	$month = 2;
 	$year = $year + 1;
 }
-echo '</table>';
+?>
+<br>
 
-echo '<br>';
 echo '<div class="center">';
-
-//今月ボタン
-echo '<form name="now" method="GET" action="cal.php">';
-echo '<input type="submit" value="今月">';
-echo '</form>';
+	//今月ボタン
+	echo '<form name="now" method="GET" action="cal.php">';
+	echo '<input type="submit" value="今月">';
+	echo '</form>';
 echo '</div><br>';
+
 echo '<table align="center">';
 	echo '<tr>';
 		echo '<td>';
@@ -162,22 +141,25 @@ echo '<table align="center">';
 			echo '<form name="before" method="GET" action="cal.php">';
 			$monthBefore = $month -1;
 			$yearBefore = $year;
+			//前月が0月になると、年を1年戻して12月にする
 			if($monthBefore ==0){
 				$monthBefore =12;
 				$yearBefore = $year - 1;
 			}
-				
 			echo '<input type="hidden" name="year" value="'.$yearBefore.'">';
 			echo '<input type="hidden" name="month" value="'.$monthBefore.'">';
 			echo '<input type="submit" value="前月">';
 			echo '</form>';
 		echo '</td>';
+		
 		echo '<td></td>';
+		
 		echo '<td>';
 			//来月ボタン
 			echo '<form name="after" method="GET" action="cal.php">';
 			$monthAfter = $month +1;
 			$yearAfter = $year;
+			//来月が13月になると、年を1年上げて1月にする
 			if($monthAfter==13){
 				$monthAfter=1;
 				$yearAfter = $year + 1;
@@ -190,7 +172,7 @@ echo '<table align="center">';
 	echo '</tr>';
 echo '</table>';
 
-?>
+
 
 
 </p>
