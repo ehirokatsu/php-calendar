@@ -29,7 +29,6 @@
     } else {
         $year = (int)$date->format('Y');
         $month = (int)$date->format('n');
-        
     }
 
     // 表示するカレンダーの年月を表示
@@ -37,10 +36,13 @@
 
     // 表示するカレンダーの1日を取得
     $firstDate = new DateTime("{$year}-{$month}-1");
+    
     // 月初めの曜日
     $dayOfWeek = $firstDate->format('w');
+    
     // 月の日数
     $dayMax = $firstDate->format('t');
+    
     // カレンダー表示用の曜日
     $strWeek= ["日", "月", 火, "水", "木", "金", "土"];
 
@@ -99,7 +101,7 @@
     $monthBefore = $month - 1;
     $yearBefore = $year;
     // 前月が0月になると、年を1年戻して12月に変換
-    if ($monthBefore == 0) {
+    if ($monthBefore === 0) {
         $monthBefore = 12;
         $yearBefore = $year - 1;
     }
@@ -108,7 +110,7 @@
     $monthAfter = $month + 1;
     $yearAfter = $year;
     // 来月が13月になると、年を1年上げて1月に変換
-    if ($monthAfter == 13) {
+    if ($monthAfter === 13) {
         $monthAfter = 1;
         $yearAfter = $year + 1;
     }
