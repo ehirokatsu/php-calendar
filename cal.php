@@ -18,14 +18,10 @@
     $date = new DateTime();
 
     // GETパラメータのチェック
-    // 年は1～9999の数値
-    // 月は1～12までの数値
     if (
         isset($_GET["year"]) &&
         isset($_GET["month"]) &&
-        preg_match('/^[0-9]{0,4}$/', $_GET["year"]) &&
-        $_GET["year"] > 0 &&
-        preg_match('/^[1-9]$|^0[1-9]$|^1[0-2]$/', $_GET["month"])
+        checkdate($_GET["month"], 1, $_GET["year"])
         ) {
             $year = (int)$_GET["year"];
             $month = (int)$_GET["month"];
@@ -33,6 +29,7 @@
     } else {
         $year = (int)$date->format('Y');
         $month = (int)$date->format('n');
+        
     }
 
     // 表示するカレンダーの年月を表示
@@ -44,17 +41,15 @@
     $dayOfWeek = $firstDate->format('w');
     // 月の日数
     $dayMax = $firstDate->format('t');
+    // カレンダー表示用の曜日
+    $strWeek= ["日", "月", 火, "水", "木", "金", "土"];
 
     echo '<table border="1" cellpadding="5" cellspacing="0" align="center">';
         // カレンダーを表示
         echo '<tr>';
-            echo '<td align="center" bgcolor="#eeeeee">日</td>';
-            echo '<td align="center" bgcolor="#eeeeee">月</td>';
-            echo '<td align="center" bgcolor="#eeeeee">火</td>';
-            echo '<td align="center" bgcolor="#eeeeee">水</td>';
-            echo '<td align="center" bgcolor="#eeeeee">木</td>';
-            echo '<td align="center" bgcolor="#eeeeee">金</td>';
-            echo '<td align="center" bgcolor="#eeeeee">土</td>';
+            for ($i = 0; $i <= 6; $i++) {
+                echo '<td align="center" bgcolor="#eeeeee">'.$strWeek[$i].'</td>';
+            }
         echo '</tr>';
 
         // 日にち用カウンタ
