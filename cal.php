@@ -14,17 +14,32 @@
 </head>
 <body>
 <?php
+
+
+function validateDate($year, $month)
+{
+    // 年は4桁、月は2桁になるよう0埋めする
+    $year = sprintf('%04s', $year);
+    $month = sprintf('%02s', $month);
+    
+    $date = "{$year}-{$month}-01";
+    $format = 'Y-m-d';
+    $checkDate = DateTime::createFromFormat($format, $date);
+
+    if ($checkDate && ($checkDate->format($format) == $date)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
     // 今月の情報を取得
     $date = new DateTime();
 
-    // GETパラメータのチェック
-    if (
-        isset($_GET["year"]) &&
-        isset($_GET["month"]) &&
-        checkdate($_GET["month"], 1, $_GET["year"])
-        ) {
-            $year = (int)$_GET["year"];
-            $month = (int)$_GET["month"];
+    // 年は1～9999、月は1～12かチェック
+    if (isset($_GET["year"]) && isset($_GET["month"]) && validateDate($_GET["year"], $_GET["month"])) {
+        $year = (int)$_GET["year"];
+        $month = (int)$_GET["month"];
     // 上記以外の場合は今月のカレンダーを表示
     } else {
         $year = (int)$date->format('Y');
@@ -44,7 +59,7 @@
     $dayMax = $firstDate->format('t');
     
     // カレンダー表示用の曜日
-    $strWeek= ["日", "月", 火, "水", "木", "金", "土"];
+    $strWeek= ["日", "月", "火", "水", "木", "金", "土"];
 
     echo '<table border="1" cellpadding="5" cellspacing="0" align="center">';
         // カレンダーを表示
