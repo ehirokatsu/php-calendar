@@ -28,23 +28,11 @@ if (isset($_GET["year"]) && isset($_GET["month"]) && $myCal->validateDate($_GET[
 // カレンダーを表示する
 $myCal->showCal($year, $month);
 
-// 前月ボタン押下時の準備
-$monthBefore = $month - 1;
-$yearBefore = $year;
-// 前月が0月になると、年を1年戻して12月に変換
-if ($monthBefore === 0) {
-    $monthBefore = 12;
-    $yearBefore = $year - 1;
-}
+// 前月の年・月を計算する
+list($yearBefore, $monthBefore) = $myCal->preMonth($year, $month);
+// 来月の年・月を計算する
+list($yearAfter, $monthAfter) = $myCal->nextMonth($year, $month);
 
-// 来月ボタン押下時の準備
-$monthAfter = $month + 1;
-$yearAfter = $year;
-// 来月が13月になると、年を1年上げて1月に変換
-if ($monthAfter === 13) {
-    $monthAfter = 1;
-    $yearAfter = $year + 1;
-}
 ?>
 
 <br>
