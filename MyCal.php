@@ -4,37 +4,11 @@ require 'BaseCal.php';
 class MyCal extends BaseCal
 {
     /**
-     * 引数の年と月のフォーマットチェックを行う。
-     * 年は0～9999の4桁以内の数値。
-     * 月は1～12の2桁以内の数値。
-     *
-     * @param int $year 表示するカレンダーの年。
-     * @param int $year 表示するカレンダーの月。
-     * @return bool フォーマットが正常であればtrue, 異常であればfalse。
-     */
-    public function validateDate($year, $month)
-    {
-        // 年は4桁、月は2桁になるよう0埋めする
-        $year = sprintf('%04s', $year);
-        $month = sprintf('%02s', $month);
-        
-        $date = "{$year}-{$month}-01";
-        $format = 'Y-m-d';
-        $checkDate = DateTime::createFromFormat($format, $date);
-
-        if ($checkDate && ($checkDate->format($format) == $date)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * 指定した年月のカレンダーを表示する。
      *
      * @param int $year 表示するカレンダーの年。
-     * @param int $year 表示するカレンダーの月。
-     * @return 無し。
+     * @param int $month 表示するカレンダーの月。
+     * @return void。
      */
     public function showCal($year, $month)
     {
@@ -105,13 +79,13 @@ class MyCal extends BaseCal
     }
     
     /**
-     * 現在表示しているカレンダーの前月の年・月を計算する。
+     * 現在表示しているカレンダーの前月の年・月、来月の年・月を計算する。
      *
      * @param int $year 現在表示しているカレンダーの年。
      * @param int $month 現在表示しているカレンダーの月。
-     * @return array|int 前月の年・月。
+     * @return array|int 前月の年・月、来月の年・月。
      */
-    public function preMonth($year, $month)
+    public function calculatePreNextDate($year, $month)
     {
         $monthBefore = $month - 1;
         $yearBefore = $year;
@@ -120,18 +94,7 @@ class MyCal extends BaseCal
             $monthBefore = 12;
             $yearBefore = $year - 1;
         }
-        return array($yearBefore, $monthBefore);
-    }
-    
-    /**
-     * 現在表示しているカレンダーの来月の年・月を計算する。
-     *
-     * @param int $year 現在表示しているカレンダーの年。
-     * @param int $month 現在表示しているカレンダーの月。
-     * @return array|int 来月の年・月。
-     */
-    public function nextMonth($year, $month)
-    {
+        
         $monthAfter = $month + 1;
         $yearAfter = $year;
         // 来月が13月になると、年を1年上げて1月に変換
@@ -139,7 +102,7 @@ class MyCal extends BaseCal
             $monthAfter = 1;
             $yearAfter = $year + 1;
         }
-        return array($yearAfter, $monthAfter);
+        return array($yearBefore, $monthBefore, $yearAfter, $monthAfter);
     }
 }
 

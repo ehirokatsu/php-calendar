@@ -28,10 +28,8 @@ if (isset($_GET["year"]) && isset($_GET["month"]) && $myCal->validateDate($_GET[
 // カレンダーを表示する
 $myCal->showCal($year, $month);
 
-// 前月の年・月を計算する
-list($yearBefore, $monthBefore) = $myCal->preMonth($year, $month);
-// 来月の年・月を計算する
-list($yearAfter, $monthAfter) = $myCal->nextMonth($year, $month);
+// 前月の年・月、来月の年・月を計算する
+list($yearBefore, $monthBefore, $yearAfter, $monthAfter) = $myCal->calculatePreNextDate($year, $month);
 
 ?>
 
